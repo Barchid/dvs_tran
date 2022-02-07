@@ -12,6 +12,7 @@ import os
 import numpy as np
 
 from project.datamodules.cifar10dvs import CIFAR10DVS
+from einops import rearrange
 
 
 class DVSDataModule(pl.LightningDataModule):
@@ -65,16 +66,20 @@ class DVSDataModule(pl.LightningDataModule):
         elif event_representation == "frames_time":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToFrame(self.sensor_size, n_time_bins=10),
-                transforms.Lambda(lambda x: (x > 0).astype(np.float32))
+                transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
+                transforms.Lambda(lambda x: rearrange(
+                    x, 'frames polarity height width -> (frames polarity) height width'))
             ])
         elif event_representation == "frames_event":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToFrame(self.sensor_size, n_event_bins=10),
-                transforms.Lambda(lambda x: (x > 0).astype(np.float32))
+                transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
+                transforms.Lambda(lambda x: rearrange(
+                    x, 'frames polarity height width -> (frames polarity) height width'))
             ])
 
         elif event_representation == "VoxelGrid":
-            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=10)
+            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=20)
 
         val_transform = tonic.transforms.Compose([
             denoise,
