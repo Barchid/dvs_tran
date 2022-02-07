@@ -119,9 +119,6 @@ class DVSDataModule(pl.LightningDataModule):
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.val_transform)
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
 
-        self.train_set = tonic.datasets.NMNIST(save_to=self.data_dir, train=True, transform=self.transform)
-        self.val_set = tonic.datasets.NMNIST(save_to=self.data_dir, train=False, transform=self.transform)
-
     def train_dataloader(self):
         return DataLoader(self.train_set, batch_size=self.batch_size, shuffle=True)
 
