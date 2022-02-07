@@ -7,6 +7,7 @@ from torch.nn import functional as F
 import torchmetrics
 
 from project.models.models import get_model
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
 class DVSModule(pl.LightningModule):
@@ -28,6 +29,10 @@ class DVSModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
+        
+        if x.shape[-2] != 224 or x.shape[-1] != 224:
+            x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
+        
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
@@ -38,6 +43,10 @@ class DVSModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
+        
+        if x.shape[-2] != 224 or x.shape[-1] != 224:
+            x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
+        
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
@@ -48,6 +57,10 @@ class DVSModule(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         x, y = batch
+        
+        if x.shape[-2] != 224 or x.shape[-1] != 224:
+            x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
+        
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
