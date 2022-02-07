@@ -60,7 +60,10 @@ class DVSDataModule(pl.LightningDataModule):
     def _get_transforms(self, event_representation: str):
         denoise = tonic.transforms.Denoise()
         if event_representation == "HOTS":
-            representation = tonic.transforms.ToTimesurface(sensor_size=self.sensor_size)
+            tonic.transforms.Compose([
+                tonic.transforms.ToTimesurface(sensor_size=self.sensor_size),
+                torchvision.transforms.Lambda(lambda x: x.mean(axis=0)),  # average of time surfaces
+            ])
         elif event_representation == "HATS":
             representation = tonic.transforms.ToAveragedTimesurface(self.sensor_size)
         elif event_representation == "frames_time":
