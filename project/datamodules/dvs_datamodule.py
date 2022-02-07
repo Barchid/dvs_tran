@@ -113,7 +113,7 @@ class DVSDataModule(pl.LightningDataModule):
         elif self.dataset == "asl-dvs":
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.train_transform)
             full_length = len(dataset)
-
+            print(full_length, 0.8*full_length)
             self.train_set, _ = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.val_transform)
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
