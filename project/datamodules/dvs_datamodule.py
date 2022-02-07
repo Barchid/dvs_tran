@@ -73,6 +73,9 @@ class DVSDataModule(pl.LightningDataModule):
                 transforms.Lambda(lambda x: (x > 0).astype(np.float32))
             ])
 
+        elif event_representation == "VoxelGrid":
+            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=10)
+
         val_transform = tonic.transforms.Compose([
             denoise,
             representation
