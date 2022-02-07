@@ -46,8 +46,8 @@ def main():
 def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     # vars() is required to pass the arguments as parameters for the LightningModule
     dict_args = vars(args)
-    dict_args['height'] = datamodule.sensor_size[0]
-    dict_args['width'] = datamodule.sensor_size[1]
+    dict_args['height'] = 224
+    dict_args['width'] = 224
     dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time', 'VoxelGrid') else 2
     dict_args['num_classes'] = datamodule.num_classes
 

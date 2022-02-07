@@ -3,12 +3,33 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import timm
-from vit_pytorch import vit_for_small_dataset
+from vit_pytorch import vit_for_small_dataset, mobile_vit
 
 
 def get_model(name: str, height: int, width: int, in_channels: int, num_classes: int, pretrained: bool = False, **kwargs):
-    if name == "mobilevit":
-        return None
+    if name == "mobilevit_xxs":
+        return mobile_vit.MobileViT(
+            image_size=(height, width),
+            dims=[64, 80, 96],
+            channels=[16, 16, 24, 24, 48, 48, 64, 64, 80, 80, 320],
+            num_classes=num_classes
+        )
+
+    elif name == "mobilevit_xs":
+        return mobile_vit.MobileViT(
+            image_size=(height, width),
+            dims=[96, 120, 144],
+            channels=[16, 32, 48, 48, 64, 64, 80, 80, 96, 96, 384],
+            num_classes=num_classes
+        )
+
+    elif name == "mobilevit_s":
+        return mobile_vit.MobileViT(
+            image_size=(height, width),
+            dims=[144, 192, 240],
+            channels=[16, 32, 64, 64, 96, 96, 128, 128, 160, 160, 640],
+            num_classes=num_classes
+        )
 
     elif name == "vit_for_small_dataset":
         return vit_for_small_dataset.ViT(
