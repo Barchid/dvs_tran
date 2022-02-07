@@ -7,8 +7,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import pytorch_lightning as pl
 from project.datamodules.nmnist import NMNISTDataModule
-
-from project.lenet5_module import Lenet5Module
+from project.dvs_module import DVSModule
 
 
 def main():
@@ -49,7 +48,7 @@ def create_module(args) -> pl.LightningModule:
     dict_args = vars(args)
 
     # TODO: you can change the module class here
-    module = Lenet5Module(**dict_args)
+    module = DVSModule(**dict_args)
 
     return module
 
@@ -86,10 +85,12 @@ def get_args():
     parser.add_argument('--ckpt_path', type=str, default=None,
                         help="Path of a checkpoint file. Defaults to None, meaning the training/testing will start from scratch.")
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--timesteps', type=int, required=True)
+    parser.add_argument('--dataset', type=str, choices=["n-mnist",
+                                                        "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
+    parser.add_argument('--event_representation', type=str, choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid"])
 
     # Args for model
-    parser = Lenet5Module.add_model_specific_args(parser)
+    parser = DVSModule.add_model_specific_args(parser)
 
     # Args for Trainer
     parser = pl.Trainer.add_argparse_args(parser)

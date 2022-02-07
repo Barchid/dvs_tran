@@ -64,4 +64,6 @@ class DVSModule(pl.LightningModule):
         # NOTE: they must appear as arguments in the __init___() function
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument('--learning_rate', type=float, default=0.0001)
+        parser.add_argument('--name', type=str, default="vit")
+        parser.add_argument('--pretrained', action="store_true")
         return parser
