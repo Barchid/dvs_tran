@@ -46,8 +46,6 @@ def main():
 def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     # vars() is required to pass the arguments as parameters for the LightningModule
     dict_args = vars(args)
-    dict_args['height'] = 224
-    dict_args['width'] = 224
     dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time', 'VoxelGrid') else 2
     dict_args['num_classes'] = datamodule.num_classes
 
@@ -98,6 +96,8 @@ def get_args():
                                                         "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
     parser.add_argument('--event_representation', type=str,
                         choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid"])
+    parser.add_argument('--height', type=int, default=256)
+    parser.add_argument('--width', type=int, default=256)
 
     # Args for model
     parser = DVSModule.add_model_specific_args(parser)

@@ -15,6 +15,9 @@ class DVSModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters(ignore=["name", "height", "width", "in_channels", "num_classes"])
 
+        self.height = height
+        self.width = width
+        
         self.model = get_model(
             name,
             height,
@@ -30,8 +33,8 @@ class DVSModule(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
 
-        if x.shape[-2] != 224 or x.shape[-1] != 224:
-            x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
+        if x.shape[-2] != self.height or x.shape[-1] != self.width:
+            x = F.upsample(x, size=(self.height, self.width), mode='nearest').to(device)
 
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
@@ -44,8 +47,8 @@ class DVSModule(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
 
-        if x.shape[-2] != 224 or x.shape[-1] != 224:
-            x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
+        if x.shape[-2] != self.height or x.shape[-1] != self.width:
+            x = F.upsample(x, size=(self.height, self.width), mode='nearest').to(device)
 
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
@@ -58,8 +61,8 @@ class DVSModule(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         x, y = batch
 
-        if x.shape[-2] != 224 or x.shape[-1] != 224:
-            x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
+        if x.shape[-2] != self.height or x.shape[-1] != self.width:
+            x = F.upsample(x, size=(self.height, self.width), mode='nearest').to(device)
 
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
