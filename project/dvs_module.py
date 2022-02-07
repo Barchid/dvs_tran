@@ -29,10 +29,10 @@ class DVSModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        
+
         if x.shape[-2] != 224 or x.shape[-1] != 224:
             x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
-        
+
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
@@ -43,10 +43,10 @@ class DVSModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        
+
         if x.shape[-2] != 224 or x.shape[-1] != 224:
             x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
-        
+
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
@@ -57,10 +57,10 @@ class DVSModule(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         x, y = batch
-        
+
         if x.shape[-2] != 224 or x.shape[-1] != 224:
             x = F.upsample(x, size=(224, 224), mode='nearest').to(device)
-        
+
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
@@ -69,7 +69,7 @@ class DVSModule(pl.LightningModule):
         self.log('test_acc', acc, on_epoch=True, prog_bar=True)
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        return torch.optim.AdamW(self.parameters(), lr=self.hparams.learning_rate)
 
     @staticmethod
     def add_model_specific_args(parent_parser):
