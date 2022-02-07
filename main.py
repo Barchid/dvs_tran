@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import pytorch_lightning as pl
-from project.datamodules.nmnist import NMNISTDataModule
+from project.datamodules.dvs_datamodule import DVSDataModule
 from project.dvs_module import DVSModule
 
 
@@ -58,7 +58,7 @@ def create_datamodule(args) -> pl.LightningDataModule:
     dict_args = vars(args)
 
     # TODO: you can change the datamodule here
-    datamodule = NMNISTDataModule(**dict_args)
+    datamodule = DVSDataModule(**dict_args)
 
     return datamodule
 
@@ -72,8 +72,13 @@ def create_trainer(args) -> pl.Trainer:
         mode="max",
     )
 
+    logger = pl.loggers.TensorBoardLogger(
+        os.path.join(args.default_root_dir, "logger"),
+        name=f"{args.name} {args.dataset} {args.event_representation}"
+    )
+
     # create trainer
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=[checkpoint_callback])
+    trainer = pl.Trainer.from_argparse_args(args, callbacks=[checkpoint_callback], logger=logger)
     return trainer
 
 
@@ -87,7 +92,8 @@ def get_args():
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--dataset', type=str, choices=["n-mnist",
                                                         "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
-    parser.add_argument('--event_representation', type=str, choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid"])
+    parser.add_argument('--event_representation', type=str,
+                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid"])
 
     # Args for model
     parser = DVSModule.add_model_specific_args(parser)

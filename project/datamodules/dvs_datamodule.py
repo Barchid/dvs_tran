@@ -15,20 +15,20 @@ from project.datamodules.cifar10dvs import CIFAR10DVS
 
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", transform_type: str = "HOTS", **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
         self.dataset = dataset  # name of the dataset
 
-        self.transform_type = transform_type
+        self.event_representation = event_representation
 
         # create the directory if not exist
         os.makedirs(data_dir, exist_ok=True)
 
         # transform
         self.sensor_size = self._get_sensor_size()
-        self.train_transform, self.val_transform = self._get_transforms(transform_type)
+        self.train_transform, self.val_transform = self._get_transforms(event_representation)
 
     def _get_sensor_size(self):
         if self.dataset == "n-mnist":
@@ -56,18 +56,18 @@ class DVSDataModule(pl.LightningDataModule):
         elif self.dataset == "asl-dvs":
             tonic.datasets.ASLDVS(save_to=self.data_dir)
 
-    def _get_transforms(self, transform_type: str):
+    def _get_transforms(self, event_representation: str):
         denoise = tonic.transforms.Denoise()
-        if transform_type == "HOTS":
+        if event_representation == "HOTS":
             representation = tonic.transforms.ToTimesurface(sensor_size=self.sensor_size)
-        elif transform_type == "HATS":
+        elif event_representation == "HATS":
             representation = tonic.transforms.ToAveragedTimesurface(self.sensor_size)
-        elif transform_type == "frames_time":
+        elif event_representation == "frames_time":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToFrame(self.sensor_size, n_time_bins=10),
                 transforms.Lambda(lambda x: (x > 0).astype(np.float32))
             ])
-        elif transform_type == "frames_event":
+        elif event_representation == "frames_event":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToFrame(self.sensor_size, n_event_bins=10),
                 transforms.Lambda(lambda x: (x > 0).astype(np.float32))
