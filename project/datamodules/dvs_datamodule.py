@@ -120,10 +120,10 @@ class DVSDataModule(pl.LightningDataModule):
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
 
     def train_dataloader(self):
-        return DataLoader(self.train_set, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.train_set, batch_size=self.batch_size, num_workers=0, shuffle=True)
 
     def val_dataloader(self):
-        return DataLoader(self.val_set, batch_size=self.batch_size, shuffle=False)
+        return DataLoader(self.val_set, batch_size=self.batch_size, num_workers=0, shuffle=False)
 
     def test_dataloader(self):
-        return DataLoader(self.val_set, batch_size=self.batch_size, shuffle=False)
+        return DataLoader(self.val_set, batch_size=self.batch_size, num_workers=0, shuffle=False)
