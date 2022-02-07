@@ -60,7 +60,7 @@ class DVSDataModule(pl.LightningDataModule):
     def _get_transforms(self, event_representation: str):
         denoise = tonic.transforms.Denoise()
         if event_representation == "HOTS":
-            tonic.transforms.Compose([
+            representation = tonic.transforms.Compose([
                 tonic.transforms.ToTimesurface(sensor_size=self.sensor_size),
                 torchvision.transforms.Lambda(lambda x: x.mean(axis=0)),  # average of time surfaces
             ])
@@ -86,13 +86,15 @@ class DVSDataModule(pl.LightningDataModule):
 
         val_transform = tonic.transforms.Compose([
             denoise,
-            representation
+            representation,
+            transforms.Lambda(lambda x: x.astype(np.float32))
         ])
 
         train_transform = tonic.transforms.Compose([
             tonic.transforms.RandomFlipLR(self.sensor_size),
             denoise,
             representation,
+            transforms.Lambda(lambda x: x.astype(np.float32))
         ])
 
         return train_transform, val_transform

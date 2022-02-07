@@ -28,7 +28,6 @@ class DVSModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        print(x.shape)
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
@@ -39,6 +38,7 @@ class DVSModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
+        print(x.shape, x.dtype)
         y_hat = self(x)
         loss = F.cross_entropy(y_hat, y)
         acc = torchmetrics.functional.accuracy(y_hat.clone().detach(), y)
