@@ -88,7 +88,7 @@ class DVSDataModule(pl.LightningDataModule):
         val_transform = tonic.transforms.Compose([
             denoise,
             representation,
-            transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
+            # transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
             transforms.Lambda(lambda x: x.astype(np.float32)),
         ])
 
@@ -96,7 +96,7 @@ class DVSDataModule(pl.LightningDataModule):
             tonic.transforms.RandomFlipLR(self.sensor_size),
             denoise,
             representation,
-            transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
+            # transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
             transforms.Lambda(lambda x: x.astype(np.float32))
         ])
 
