@@ -16,9 +16,9 @@ def main():
 
     args = get_args()
 
-    module = create_module(args)
-
     datamodule = create_datamodule(args)
+    
+    module = create_module(args, datamodule)
 
     trainer = create_trainer(args)
 
@@ -43,9 +43,13 @@ def main():
         trainer.validate(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
 
 
-def create_module(args) -> pl.LightningModule:
+def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     # vars() is required to pass the arguments as parameters for the LightningModule
     dict_args = vars(args)
+    dict_args['height'] = datamodule.sensor_size[0]
+    dict_args['width'] = datamodule.sensor_size[1]
+    dict_args['in_channels'] = datamodule.sensor_size[2]
+    dict_args['num_classes'] = datamodule.num_classes
 
     # TODO: you can change the module class here
     module = DVSModule(**dict_args)

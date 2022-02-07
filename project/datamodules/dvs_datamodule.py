@@ -27,20 +27,20 @@ class DVSDataModule(pl.LightningDataModule):
         os.makedirs(data_dir, exist_ok=True)
 
         # transform
-        self.sensor_size = self._get_sensor_size()
+        self.sensor_size, self.num_classes = self._get_dataset_info()
         self.train_transform, self.val_transform = self._get_transforms(event_representation)
 
-    def _get_sensor_size(self):
+    def _get_dataset_info(self):
         if self.dataset == "n-mnist":
-            return tonic.datasets.NMNIST.sensor_size
+            return tonic.datasets.NMNIST.sensor_size, len(tonic.datasets.NMNIST.classes)
         elif self.dataset == "cifar10-dvs":
-            return CIFAR10DVS.sensor_size
+            return CIFAR10DVS.sensor_size, 10
         elif self.dataset == "dvsgesture":
-            return tonic.datasets.DVSGesture.sensor_size
+            return tonic.datasets.DVSGesture.sensor_size, len(tonic.datasets.DVSGesture.classes)
         elif self.dataset == "n-caltech101":
-            return (224, 224, 2)
+            return (224, 224, 2), 101
         elif self.dataset == "asl-dvs":
-            return tonic.datasets.ASLDVS.sensor_size
+            return tonic.datasets.ASLDVS.sensor_size, len(tonic.datasets.ASLDVS.classes)
 
     def prepare_data(self) -> None:
         # downloads the dataset if it does not exist
@@ -114,7 +114,7 @@ class DVSDataModule(pl.LightningDataModule):
         elif self.dataset == "asl-dvs":
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.train_transform)
             full_length = len(dataset)
-            print(full_length, 0.8*full_length)
+            print(full_length, 0.8 * full_length)
             self.train_set, _ = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.val_transform)
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
