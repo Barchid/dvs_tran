@@ -83,7 +83,7 @@ class DVSDataModule(pl.LightningDataModule):
             ])
 
         elif event_representation == "VoxelGrid":
-            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=20)
+            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=9)
 
         val_transform = tonic.transforms.Compose([
             denoise,
@@ -108,6 +108,7 @@ class DVSDataModule(pl.LightningDataModule):
                 save_to=self.data_dir, transform=self.train_transform, target_transform=None, train=True)
             self.val_set = tonic.datasets.NMNIST(
                 save_to=self.data_dir, transform=self.val_transform, target_transform=None, train=False)
+            
         elif self.dataset == "cifar10-dvs":
             dataset_train = CIFAR10DVS(save_to=self.data_dir, transform=self.train_transform, target_transform=None)
             dataset_val = CIFAR10DVS(save_to=self.data_dir, transform=self.val_transform, target_transform=None)

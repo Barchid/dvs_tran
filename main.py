@@ -17,7 +17,7 @@ def main():
     args = get_args()
 
     datamodule = create_datamodule(args)
-    
+
     module = create_module(args, datamodule)
 
     trainer = create_trainer(args)
@@ -46,7 +46,8 @@ def main():
 def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     # vars() is required to pass the arguments as parameters for the LightningModule
     dict_args = vars(args)
-    dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time', 'VoxelGrid') else 2
+    dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time') else 2
+    dict_args['in_channels'] = 9 if args.event_representation == "VoxelGrid" else 2
     dict_args['num_classes'] = datamodule.num_classes
 
     # TODO: you can change the module class here
