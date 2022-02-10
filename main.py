@@ -33,7 +33,7 @@ def main():
         # TODO: add any data you want to report here
         # here, we put the model's hyperparameters and the resulting val accuracy
         report.write(
-            f"SpikingLeNet5 {args.timesteps} {args.bias} {args.neuron_model} {args.learning_rate}  {trainer.checkpoint_callback.best_model_score}\n")
+            f"{args.name} {args.dataset} {args.event_representation} {args.learning_rate}  {trainer.checkpoint_callback.best_model_score}\n")
     elif args.mode == "lr_find":
         lr_finder = trainer.tuner.lr_find(module, datamodule=datamodule)
         fig = lr_finder.plot(suggest=True)
