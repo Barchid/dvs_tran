@@ -48,6 +48,7 @@ def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     dict_args = vars(args)
     dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time') else 2
     dict_args['in_channels'] = 9 if args.event_representation == "VoxelGrid" else 2
+    dict_args['in_channels'] = 2 if args.event_representation == "frames" else 2
     dict_args['num_classes'] = datamodule.num_classes
 
     # TODO: you can change the module class here
@@ -96,7 +97,7 @@ def get_args():
     parser.add_argument('--dataset', type=str, choices=["n-mnist",
                                                         "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
     parser.add_argument('--event_representation', type=str,
-                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid"])
+                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid", "frames"])
     parser.add_argument('--height', type=int, default=256)
     parser.add_argument('--width', type=int, default=256)
 

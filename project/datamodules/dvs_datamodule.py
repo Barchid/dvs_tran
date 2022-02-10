@@ -81,6 +81,14 @@ class DVSDataModule(pl.LightningDataModule):
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))
             ])
+            
+        elif event_representation == "frames":
+            representation = tonic.transforms.Compose([
+                tonic.transforms.ToFrame(self.sensor_size, n_event_bins=1),
+                # transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
+                transforms.Lambda(lambda x: rearrange(
+                    x, 'frames polarity height width -> (frames polarity) height width'))
+            ])
 
         elif event_representation == "VoxelGrid":
             representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=9)
