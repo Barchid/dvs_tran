@@ -59,7 +59,7 @@ class DVSDataModule(pl.LightningDataModule):
             tonic.datasets.ASLDVS(save_to=self.data_dir)
 
     def _get_transforms(self, event_representation: str):
-        denoise = tonic.transforms.Denoise()
+        # denoise = tonic.transforms.Denoise()
         if event_representation == "HOTS":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToTimesurface(sensor_size=self.sensor_size),
@@ -81,7 +81,7 @@ class DVSDataModule(pl.LightningDataModule):
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))
             ])
-            
+
         elif event_representation == "frames":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToFrame(self.sensor_size, n_event_bins=1),
@@ -94,7 +94,7 @@ class DVSDataModule(pl.LightningDataModule):
             representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=9)
 
         val_transform = tonic.transforms.Compose([
-            denoise,
+            # denoise,
             representation,
             # transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
             transforms.Lambda(lambda x: x.astype(np.float32)),
@@ -102,7 +102,7 @@ class DVSDataModule(pl.LightningDataModule):
 
         train_transform = tonic.transforms.Compose([
             tonic.transforms.RandomFlipLR(self.sensor_size),
-            denoise,
+            # denoise,
             representation,
             # transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
             transforms.Lambda(lambda x: x.astype(np.float32))
@@ -116,7 +116,7 @@ class DVSDataModule(pl.LightningDataModule):
                 save_to=self.data_dir, transform=self.train_transform, target_transform=None, train=True)
             self.val_set = tonic.datasets.NMNIST(
                 save_to=self.data_dir, transform=self.val_transform, target_transform=None, train=False)
-            
+
         elif self.dataset == "cifar10-dvs":
             dataset_train = CIFAR10DVS(save_to=self.data_dir, transform=self.train_transform, target_transform=None)
             dataset_val = CIFAR10DVS(save_to=self.data_dir, transform=self.val_transform, target_transform=None)
