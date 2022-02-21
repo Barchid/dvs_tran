@@ -25,6 +25,8 @@ def to_weighted_frames(events: np.ndarray, sensor_size, timesteps: int, blur_typ
 
     if blur_type is not None:
         frames = to_blur(frames, blur_type)
+        
+    return frames
 
 
 @dataclass(frozen=True)
