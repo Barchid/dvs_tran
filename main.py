@@ -27,13 +27,13 @@ def main():
         trainer.fit(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
 
         # report results in a txt file
-        report_path = os.path.join(args.default_root_dir, 'train_report.txt')
+        report_path = os.path.join('train_report.txt')
         report = open(report_path, 'a')
 
         # TODO: add any data you want to report here
         # here, we put the model's hyperparameters and the resulting val accuracy
         report.write(
-            f"{args.name} {args.dataset} {args.event_representation} {args.learning_rate}  {trainer.checkpoint_callback.best_model_score}\n")
+            f"{args.name} {args.dataset} {args.event_representation} {args.blur_type} {args.learning_rate}  {trainer.checkpoint_callback.best_model_score}\n")
     elif args.mode == "lr_find":
         lr_finder = trainer.tuner.lr_find(module, datamodule=datamodule)
         fig = lr_finder.plot(suggest=True)
