@@ -4,6 +4,19 @@ import torch.nn.functional as F
 import torch.optim as optim
 import timm
 from vit_pytorch import vit_for_small_dataset, mobile_vit
+import torchvision.models as models
+
+
+def get_resnet18(in_channels: int, num_classes: int):
+    resnet18 = models.resnet18(progress=True)
+
+    resnet18.fc = nn.Linear(512, num_classes, bias=True)
+
+    if in_channels != 3:
+        resnet18.conv1 = nn.Conv2d(in_channels, 64, kernel_size=(
+            7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+
+    return resnet18
 
 
 def get_model(name: str, height: int, width: int, in_channels: int, num_classes: int, pretrained: bool = False, **kwargs):

@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 from torch.nn import functional as F
 import torchmetrics
 
-from project.models.models import get_model
+from project.models.models import get_model, get_resnet18
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
@@ -17,14 +17,20 @@ class DVSModule(pl.LightningModule):
 
         self.height = height
         self.width = width
-        
-        self.model = get_model(
-            name,
-            height,
-            width,
-            in_channels,
-            num_classes
-        )
+
+        if name == 'resnet':
+            self.model = get_resnet18(
+                in_channels,
+                num_classes
+            )
+        else:
+            self.model = get_model(
+                name,
+                height,
+                width,
+                in_channels,
+                num_classes
+            )
 
     def forward(self, x):
         x = self.model(x)
@@ -80,6 +86,6 @@ class DVSModule(pl.LightningModule):
         # NOTE: they must appear as arguments in the __init___() function
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument('--learning_rate', type=float, default=0.0001)
-        parser.add_argument('--name', type=str, default="vit")
+        parser.add_argument('--name', type=str, default="resnet")
         parser.add_argument('--pretrained', action="store_true")
         return parser

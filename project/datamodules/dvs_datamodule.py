@@ -15,14 +15,16 @@ import numpy as np
 from project.datamodules.cifar10dvs import CIFAR10DVS
 from einops import rearrange
 
+from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames
+
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
         self.dataset = dataset  # name of the dataset
-
+        self.timesteps = timesteps
         self.event_representation = event_representation
 
         # create the directory if not exist
@@ -69,14 +71,14 @@ class DVSDataModule(pl.LightningDataModule):
             representation = tonic.transforms.ToAveragedTimesurface(self.sensor_size)
         elif event_representation == "frames_time":
             representation = tonic.transforms.Compose([
-                tonic.transforms.ToFrame(self.sensor_size, n_time_bins=10),
+                tonic.transforms.ToFrame(self.sensor_size, n_time_bins=self.timesteps),
                 transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))
             ])
         elif event_representation == "frames_event":
             representation = tonic.transforms.Compose([
-                tonic.transforms.ToFrame(self.sensor_size, n_event_bins=10),
+                tonic.transforms.ToFrame(self.sensor_size, n_event_bins=self.timesteps),
                 transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))
@@ -91,7 +93,18 @@ class DVSDataModule(pl.LightningDataModule):
             ])
 
         elif event_representation == "VoxelGrid":
-            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=9)
+            representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=self.timesteps)
+
+        elif event_representation == 'weighted_frames':
+            representation = ToWeightedFrames(self.sensor_size, self.timesteps)
+
+        elif event_representation == 'bit_encoding':
+            representation = tonic.transforms.Compose([
+                ToBitEncoding(self.sensor_size),
+                # transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
+                transforms.Lambda(lambda x: rearrange(
+                    x, 'frames polarity height width -> (frames polarity) height width'))
+            ])
 
         val_transform = tonic.transforms.Compose([
             # denoise,
@@ -101,6 +114,8 @@ class DVSDataModule(pl.LightningDataModule):
         ])
 
         train_transform = tonic.transforms.Compose([
+            tonic.transforms.RandomTimeReversal(),
+            tonic.transforms.RandomFlipPolarity(),
             tonic.transforms.RandomFlipLR(self.sensor_size),
             # denoise,
             representation,

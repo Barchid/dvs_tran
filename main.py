@@ -46,8 +46,13 @@ def main():
 def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     # vars() is required to pass the arguments as parameters for the LightningModule
     dict_args = vars(args)
-    dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time') else 2
-    dict_args['in_channels'] = 9 if args.event_representation == "VoxelGrid" else dict_args['in_channels']
+    if args.event_representation in ('frames_time', 'frames_event', 'VoxelGrid'):
+        dict_args['in_channels'] = args.timesteps * 2
+    elif args.event_representation in ('weighted_frames', 'bit_encoding'):
+        dict_args['in_channels'] = 2
+        
+    # dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time') else 2
+    # dict_args['in_channels'] = args.timesteps if args.event_representation == "VoxelGrid" else dict_args['in_channels']
     dict_args['num_classes'] = datamodule.num_classes
 
     # TODO: you can change the module class here
@@ -96,9 +101,10 @@ def get_args():
     parser.add_argument('--dataset', type=str, choices=["n-mnist",
                                                         "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
     parser.add_argument('--event_representation', type=str,
-                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid", "frames"])
+                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid", "frames", "weighted_frames", "bit_encoding"])
     parser.add_argument('--height', type=int, default=256)
     parser.add_argument('--width', type=int, default=256)
+    parser.add_argument('--timesteps', type=int, default=8)
 
     # Args for model
     parser = DVSModule.add_model_specific_args(parser)
