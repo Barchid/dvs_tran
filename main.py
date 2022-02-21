@@ -105,6 +105,7 @@ def get_args():
     parser.add_argument('--height', type=int, default=256)
     parser.add_argument('--width', type=int, default=256)
     parser.add_argument('--timesteps', type=int, default=8)
+    parser.add_argument('--blur_type', type=str, choices=['averaging', 'gaussian', 'median', None], default=None)
 
     # Args for model
     parser = DVSModule.add_model_specific_args(parser)

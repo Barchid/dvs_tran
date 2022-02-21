@@ -39,9 +39,10 @@ class ToBitEncoding:
 class ToWeightedFrames:
     sensor_size: Tuple[int, int, int]
     timesteps: int
+    blur_type: str
 
     def __call__(self, events):
-        return to_weighted_frames(events.copy(), self.sensor_size, self.timesteps)
+        return to_weighted_frames(events.copy(), self.sensor_size, self.timesteps, self.blur_type)
 
 
 def to_blur(event_frames: np.ndarray, blur_type: str = 'averaging'):

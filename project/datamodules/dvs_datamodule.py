@@ -19,12 +19,13 @@ from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames
 
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, blur_type: str = None, **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
         self.dataset = dataset  # name of the dataset
         self.timesteps = timesteps
+        self.blur_type = blur_type
         self.event_representation = event_representation
 
         # create the directory if not exist
@@ -96,7 +97,7 @@ class DVSDataModule(pl.LightningDataModule):
             representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=self.timesteps)
 
         elif event_representation == 'weighted_frames':
-            representation = ToWeightedFrames(self.sensor_size, self.timesteps)
+            representation = ToWeightedFrames(self.sensor_size, self.timesteps, blur_type=self.blur_type)
 
         elif event_representation == 'bit_encoding':
             representation = tonic.transforms.Compose([
