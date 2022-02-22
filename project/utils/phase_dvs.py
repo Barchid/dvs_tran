@@ -12,7 +12,7 @@ from dataclasses import dataclass
 def to_bit_encoding(events: np.ndarray, sensor_size):
     event_frames = tonic.transforms.functional.to_frame_numpy(events, sensor_size, n_time_bins=8)
     event_frames = (event_frames > 0).astype(np.uint8)  # binary event frames
-    return np.packbits(event_frames).astype(np.float32) / 255.
+    return np.packbits(event_frames, axis=0).astype(np.float32) / 255.
 
 
 def to_weighted_frames(events: np.ndarray, sensor_size, timesteps: int, blur_type=None):
