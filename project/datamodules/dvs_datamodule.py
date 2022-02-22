@@ -19,7 +19,7 @@ from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames
 
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, blur_type: str = None, **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, blur_type: str = None, num_workers: int = 0 **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
@@ -27,6 +27,7 @@ class DVSDataModule(pl.LightningDataModule):
         self.timesteps = timesteps
         self.blur_type = blur_type
         self.event_representation = event_representation
+        self.num_workers = num_workers
 
         # create the directory if not exist
         os.makedirs(data_dir, exist_ok=True)
@@ -158,10 +159,10 @@ class DVSDataModule(pl.LightningDataModule):
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
 
     def train_dataloader(self):
-        return DataLoader(self.train_set, batch_size=self.batch_size, num_workers=0, shuffle=True)
+        return DataLoader(self.train_set, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
 
     def val_dataloader(self):
-        return DataLoader(self.val_set, batch_size=self.batch_size, num_workers=0, shuffle=False)
+        return DataLoader(self.val_set, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False)
 
     def test_dataloader(self):
-        return DataLoader(self.val_set, batch_size=self.batch_size, num_workers=0, shuffle=False)
+        return DataLoader(self.val_set, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=False)
