@@ -19,7 +19,7 @@ from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames
 
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, blur_type: str = None, num_workers: int = 0 **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, blur_type: str = None, num_workers: int = 0, **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
