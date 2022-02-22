@@ -33,4 +33,11 @@ python main.py --default_root_dir="experiments/bit_encoding" --gpus=1 --event_re
 
 
 
-python main.py --default_root_dir="experiments/bit_encoding_nmnist" --gpus=1 --event_representation="bit_encoding" --timesteps=8 --dataset="n-mnist" --batch_size=1024 --num_workers=4 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --mode="lr_find"
+@REM 99.4
+python main.py --default_root_dir="experiments/voxel_nmnist" --num_workers=8 --gpus=1 --event_representation="VoxelGrid" --timesteps=10 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.009
+
+@REM 99.3
+python main.py --default_root_dir="experiments/bit_nmnist" --num_workers=8 --gpus=1 --event_representation="bit_encoding" --timesteps=8 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.0019
+
+
+python main.py --default_root_dir="experiments/histo_nmnist" --num_workers=8 --gpus=1 --event_representation="histogram" --timesteps=10 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.0019 --mode="lr_find"

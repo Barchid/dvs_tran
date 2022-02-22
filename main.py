@@ -50,7 +50,7 @@ def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
         dict_args['in_channels'] = args.timesteps * 2
     if args.event_representation == 'VoxelGrid':
         dict_args['in_channels'] = args.timesteps
-    elif args.event_representation in ('weighted_frames', 'bit_encoding'):
+    elif args.event_representation in ('weighted_frames', 'bit_encoding', 'histogram'):
         dict_args['in_channels'] = 2
         
     # dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time') else 2
