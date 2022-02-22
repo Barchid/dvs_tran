@@ -85,7 +85,7 @@ class DVSDataModule(pl.LightningDataModule):
                     x, 'frames polarity height width -> (frames polarity) height width'))
             ])
 
-        elif event_representation == "frames":
+        elif event_representation == "histogram":
             representation = tonic.transforms.Compose([
                 tonic.transforms.ToFrame(self.sensor_size, n_event_bins=1),
                 # transforms.Lambda(lambda x: (x > 0).astype(np.float32)),

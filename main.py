@@ -103,7 +103,7 @@ def get_args():
     parser.add_argument('--dataset', type=str, choices=["n-mnist",
                                                         "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
     parser.add_argument('--event_representation', type=str,
-                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid", "frames", "weighted_frames", "bit_encoding"])
+                        choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid", "histogram", "weighted_frames", "bit_encoding"])
     parser.add_argument('--height', type=int, default=256)
     parser.add_argument('--width', type=int, default=256)
     parser.add_argument('--timesteps', type=int, default=8)
