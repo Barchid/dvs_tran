@@ -12,7 +12,7 @@ from project.dvs_module import DVSModule
 
 def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
-    pl.seed_everything(1234)
+    pl.seed_everything(4321)
 
     args = get_args()
 
