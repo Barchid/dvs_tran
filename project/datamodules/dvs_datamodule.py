@@ -15,7 +15,7 @@ import numpy as np
 from project.datamodules.cifar10dvs import CIFAR10DVS
 from einops import rearrange
 
-from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames
+from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames, ToTimeSurfaceCustom
 
 
 class DVSDataModule(pl.LightningDataModule):
@@ -66,8 +66,8 @@ class DVSDataModule(pl.LightningDataModule):
         # denoise = tonic.transforms.Denoise()
         if event_representation == "HOTS":
             representation = tonic.transforms.Compose([
-                tonic.transforms.ToTimesurface(sensor_size=self.sensor_size),
-                torchvision.transforms.Lambda(lambda x: x.mean(axis=0)),  # average of time surfaces
+                ToTimeSurfaceCustom(self.sensor_size),
+                # torchvision.transforms.Lambda(lambda x: x.mean(axis=0)),  # average of time surfaces
             ])
         elif event_representation == "HATS":
             representation = tonic.transforms.ToAveragedTimesurface(self.sensor_size)

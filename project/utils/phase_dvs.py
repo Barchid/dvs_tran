@@ -8,6 +8,45 @@ import numpy as np
 import cv2
 from dataclasses import dataclass
 
+def to_timesurface_custom(
+    events, sensor_size, tau=5e3, decay="lin"
+):
+
+    radius_x = 0
+    radius_y = 0
+    surface_dimensions = sensor_size
+
+    assert "x" and "y" and "t" and "p" in events.dtype.names
+
+    timestamp_memory = np.zeros(
+        (sensor_size[2], sensor_size[1] + radius_y * 2, sensor_size[0] + radius_x * 2)
+    )
+    timestamp_memory -= tau * 3 + 1
+    result = np.zeros_like(timestamp_memory)
+    for index, event in enumerate(events):
+        x = int(event["x"])
+        y = int(event["y"])
+        timestamp_memory[int(event["p"]), y + radius_y, x + radius_x] = event["t"]
+        timestamp_context = timestamp_memory - event["t"]
+
+        if decay == "lin":
+            timesurface = timestamp_context / (3 * tau) + 1
+            timesurface[timesurface < 0] = 0
+        elif decay == "exp":
+            timesurface = np.exp(timestamp_context / tau)
+        result += timesurface
+        
+    return result/len(events)
+
+@dataclass(frozen=True)
+class ToTimeSurfaceCustom:
+    sensor_size: Tuple[int, int, int]
+    # tau: float
+    # decay: str
+
+    def __call__(self, events):
+        return to_timesurface_custom(events.copy(), self.sensor_size)
+
 
 def to_bit_encoding(events: np.ndarray, sensor_size):
     event_frames = tonic.transforms.functional.to_frame_numpy(events, sensor_size, n_time_bins=8)
