@@ -42,8 +42,10 @@ python main.py --default_root_dir="experiments/bit_nmnist" --num_workers=8 --gpu
 python main.py --default_root_dir="experiments/framestime_nmnist" --num_workers=8 --gpus=1 --event_representation="frames_time" --timesteps=10 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.0019 --mode="lr_find"
 
 
-python main.py --default_root_dir="experiments/framestime_cifar10" --num_workers=5 --gpus=1 --event_representation="frames_time" --timesteps=10 --dataset="cifar10-dvs" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001
-python main.py --default_root_dir="experiments/voxel_cifar10" --num_workers=5 --gpus=1 --event_representation="VoxelGrid" --timesteps=10 --dataset="cifar10-dvs" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001
+python main.py --default_root_dir="experiments/framestime_cifar10" --num_workers=2 --gpus=1 --event_representation="frames_time" --timesteps=10 --dataset="cifar10-dvs" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/voxel_cifar10" --num_workers=2 --gpus=1 --event_representation="VoxelGrid" --timesteps=10 --dataset="cifar10-dvs" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/histogram_cifar10" --num_workers=2 --gpus=1 --event_representation="histogram" --timesteps=10 --dataset="cifar10-dvs" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/bit_cifar10" --num_workers=2 --gpus=1 --event_representation="bit_encoding" --timesteps=8 --dataset="cifar10-dvs" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 
 
 @REM 79.55

@@ -138,8 +138,8 @@ class DVSDataModule(pl.LightningDataModule):
             dataset_train = CIFAR10DVS(save_to=self.data_dir, transform=self.train_transform, target_transform=None)
             dataset_val = CIFAR10DVS(save_to=self.data_dir, transform=self.val_transform, target_transform=None)
             print(len(dataset_train))
-            self.train_set, _ = random_split(dataset_train, lengths=[8330, 10000 - 8330])
-            _, self.val_set = random_split(dataset_val, lengths=[8330, 10000 - 8330])
+            self.train_set, _ = random_split(dataset_train, lengths=[8000, 10000 - 8000])
+            _, self.val_set = random_split(dataset_val, lengths=[8000, 10000 - 8000])
 
         elif self.dataset == "dvsgesture":
             self.train_set = tonic.datasets.DVSGesture(
