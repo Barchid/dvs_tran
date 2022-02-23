@@ -46,11 +46,11 @@ def main():
 def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
     # vars() is required to pass the arguments as parameters for the LightningModule
     dict_args = vars(args)
-    if args.event_representation in ('frames_time', 'frames_event'):
+    if args.event_representation in ('frames_time', 'frames_event', 'bit_encoding'):
         dict_args['in_channels'] = args.timesteps * 2
     if args.event_representation == 'VoxelGrid':
         dict_args['in_channels'] = args.timesteps
-    elif args.event_representation in ('weighted_frames', 'bit_encoding', 'histogram', 'HOTS'):
+    elif args.event_representation in ('weighted_frames', 'histogram', 'HOTS'):
         dict_args['in_channels'] = 2
         
     # dict_args['in_channels'] = 20 if args.event_representation in ('frames_event', 'frames_time') else 2

@@ -102,7 +102,7 @@ class DVSDataModule(pl.LightningDataModule):
 
         elif event_representation == 'bit_encoding':
             representation = tonic.transforms.Compose([
-                ToBitEncoding(self.sensor_size),
+                ToBitEncoding(self.sensor_size, timesteps=self.timesteps),
                 # transforms.Lambda(lambda x: (x > 0).astype(np.float32)),
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))

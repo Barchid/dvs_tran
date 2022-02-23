@@ -8,6 +8,7 @@ import numpy as np
 import cv2
 from dataclasses import dataclass
 
+
 def to_timesurface_custom(
     events, sensor_size, tau=5e3, decay="lin"
 ):
@@ -35,8 +36,9 @@ def to_timesurface_custom(
         elif decay == "exp":
             timesurface = np.exp(timestamp_context / tau)
         result += timesurface
-        
-    return result/len(events)
+
+    return result / len(events)
+
 
 @dataclass(frozen=True)
 class ToTimeSurfaceCustom:
@@ -48,10 +50,15 @@ class ToTimeSurfaceCustom:
         return to_timesurface_custom(events.copy(), self.sensor_size)
 
 
-def to_bit_encoding(events: np.ndarray, sensor_size):
-    event_frames = tonic.transforms.functional.to_frame_numpy(events, sensor_size, n_time_bins=8)
+def to_bit_encoding(events: np.ndarray, sensor_size, timesteps: int = 1):
+    event_frames = tonic.transforms.functional.to_frame_numpy(events, sensor_size, n_time_bins=timesteps * 8)
     event_frames = (event_frames > 0).astype(np.uint8)  # binary event frames
-    return np.packbits(event_frames, axis=0).astype(np.float32) / 255.
+    res = np.zeros((timesteps, *event_frames.shape[1:]), dtype=np.float32)
+    for i in range(timesteps):
+        e_f = event_frames[i*8:(i+1)*8]
+        bit_frame = np.packbits(e_f, axis=0).astype(np.float32) / 255.
+        res[i] = bit_frame[0]
+    return res
 
 
 def to_weighted_frames(events: np.ndarray, sensor_size, timesteps: int, blur_type=None):
@@ -64,16 +71,17 @@ def to_weighted_frames(events: np.ndarray, sensor_size, timesteps: int, blur_typ
 
     if blur_type is not None:
         frames = to_blur(frames, blur_type)
-        
+
     return frames
 
 
 @dataclass(frozen=True)
 class ToBitEncoding:
     sensor_size: Tuple[int, int, int]
+    timesteps: int
 
     def __call__(self, events):
-        return to_bit_encoding(events.copy(), self.sensor_size)
+        return to_bit_encoding(events.copy(), self.sensor_size, timesteps=self.timesteps)
 
 
 @dataclass(frozen=True)
