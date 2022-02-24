@@ -24,7 +24,7 @@ class CenteredOcclusion:
     sensor_size: Tuple[int, int, int]
 
     def __call__(self, events):
-        c = [.03, .06, .09, 0.17, 0.27][self.severity - 1]  # size of severity
+        c = [.08, .12, 0.18, 0.26, 0.38][self.severity - 1]  # c is the sigma here
         mid = (self.sensor_size[0] // 2, self.sensor_size[1] // 2, self.sensor_size[2])
 
         occ_len_x = int(self.sensor_size[0] * c)
