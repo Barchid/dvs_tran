@@ -36,9 +36,12 @@ def hot_pixels(frames: np.array, severity: int):
     # apply hot pixels in frames
     result = []
     for i in range(frames.shape[0]):
-        frame = frames[i]  # C,H,W
-        frame[0][hot_pixels_mask == 1] = 1.  # for positive channel
-        frame[1][hot_pixels_mask == 1] = 1.  # for negative channel
+        frame = frames[i]  # C,H,W or # H, W
+        if frame.ndim == 3:
+            frame[0][hot_pixels_mask == 1] = 1.  # for positive channel
+            frame[1][hot_pixels_mask == 1] = 1.  # for negative channel
+        else:
+            frame[hot_pixels_mask == 1] = 1.  # for positive channel
         result.append(frame)
 
     return np.array(result, dtype=np.float32)
