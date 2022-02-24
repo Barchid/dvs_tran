@@ -87,7 +87,7 @@ class NCARS(Dataset):
         # print(events, events.dtype, events[0])
         # exit()
         # events = np.array(structured_to_unstructured(events, dtype=np.float))
-        events[:, 2] -= self.minimum_y_value
+        # events[:, 2] -= self.minimum_y_value
         target = self.targets[index]
         if self.transform is not None:
             events = self.transform(events)
