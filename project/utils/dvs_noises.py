@@ -41,7 +41,7 @@ class RandomTimeReversal:
             if events['p'].dtype == np.int64:
                 events["p"] *= -1
             else:
-                events['p'] = not events['p']
+                events['p'] = np.invert(events['p'])
         return events
 
 
