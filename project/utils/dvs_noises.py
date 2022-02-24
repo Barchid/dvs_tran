@@ -1,7 +1,8 @@
+from dataclasses import dataclass
 import os
-from typing import Optional
+from typing import Optional, Tuple
 import numpy as np
-
+import tonic
 from tonic.io import read_mnist_file
 from tonic.dataset import Dataset
 from tonic.download_utils import extract_archive
@@ -17,6 +18,82 @@ from torch.utils.data.dataloader import DataLoader
 from torchvision import transforms
 
 
+@dataclass
+class CenteredOcclusion:
+    severity: int
+    sensor_size: Tuple[int, int, int]
+
+    def __call__(self, events):
+        c = [.03, .06, .09, 0.17, 0.27][self.severity - 1]  # size of severity
+        mid = (self.sensor_size[0] // 2, self.sensor_size[1] // 2, self.sensor_size[2])
+
+        occ_len_x = int(self.sensor_size[0] * c)
+        occ_len_y = int(self.sensor_size[1] * c)
+
+        # get coordinates of a centered crop
+        coordinates = []
+        for x in range(mid[0] - occ_len_x // 2, mid[0] + occ_len_x // 2):
+            for y in range(mid[1] - occ_len_y // 2, mid[1] + occ_len_y // 2):
+                coordinates.append(x, y)
+
+        return tonic.transforms.functional.drop_pixel_numpy(events=events, coordinates=self.coordinates)
+
+
+@dataclass(frozen=True)
+class BackgroundActivityNoise:
+    sensor_size: Tuple[int, int, int]
+    severity: int
+
+    def __call__(self, events):
+        c = [.03, .06, .09, 0.17, 0.27][self.severity - 1]  # percentage of events to add in noise
+        n_noise_events = c * len(events)
+        noise_events = np.zeros(n_noise_events, dtype=events.dtype)
+        for channel in events.dtype.names:
+            event_channel = events[channel]
+            if channel == "x":
+                low, high = 0, self.sensor_size[0]
+            if channel == "y":
+                low, high = 0, self.sensor_size[1]
+            if channel == "p":
+                low, high = 0, self.sensor_size[2]
+            if channel == "t":
+                low, high = events["t"].min(), events["t"].max()
+            noise_events[channel] = np.random.uniform(
+                low=low, high=high, size=n_noise_events
+            )
+        events = np.concatenate((events, noise_events))
+        return events[np.argsort(events["t"])]
+
+
+@dataclass(frozen=True)
+class HotPixelActivty:
+    sensor_size: Tuple[int, int, int]
+    severity: int
+
+    def __call__(self, events):
+        c = [.03, .06, .09, 0.17, 0.27][self.severity - 1]  # percentage of events to add in noise
+        n_noise_events = c * len(events)
+
+        sensor_size = [4, 4]
+
+        noise_events = np.zeros(n_noise_events, dtype=events.dtype)
+        for channel in events.dtype.names:
+            event_channel = events[channel]
+            if channel == "x":
+                low, high = 0, self.sensor_size[0]
+            if channel == "y":
+                low, high = 0, self.sensor_size[1]
+            if channel == "p":
+                low, high = 0, self.sensor_size[2]
+            if channel == "t":
+                low, high = events["t"].min(), events["t"].max()
+            noise_events[channel] = np.random.uniform(
+                low=low, high=high, size=n_noise_events
+            )
+        events = np.concatenate((events, noise_events))
+        return events[np.argsort(events["t"])]
+
+
 def hot_pixels(frames: np.array, severity: int):
     # frames dim : (T,C,H,W)
     # severity between 1 and 5
@@ -29,7 +106,7 @@ def hot_pixels(frames: np.array, severity: int):
     # from https://stackoverflow.com/questions/19597473/binary-random-array-with-a-specific-proportion-of-ones
     N = frames.shape[-2] * frames.shape[-1]  # total size of mask
     K = int(c * N)  # certain proportion of broken pixels
-    hot_pixels_mask = np.array([1.] * K + [0.] * (N-K))
+    hot_pixels_mask = np.array([1.] * K + [0.] * (N - K))
     np.random.shuffle(hot_pixels_mask)
     hot_pixels_mask = np.reshape(hot_pixels_mask, (height, width))
 

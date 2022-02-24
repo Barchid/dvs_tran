@@ -31,7 +31,7 @@ python main.py --default_root_dir="experiments/voxel_ncars" --num_workers=10 --g
 python main.py --default_root_dir="experiments/histogram_ncars" --num_workers=10 --gpus=1 --event_representation="histogram" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 @REM 92.04
 python main.py --default_root_dir="experiments/bit_ncars" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=1 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
-
+@REM 90.74
 python main.py --default_root_dir="experiments/multibit_ncars" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=3 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 
 

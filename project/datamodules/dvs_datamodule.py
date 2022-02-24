@@ -15,13 +15,13 @@ import numpy as np
 from project.datamodules.cifar10dvs import CIFAR10DVS
 from einops import rearrange
 from project.datamodules.ncars import NCARS
-from project.utils.dvs_noises import background_activity, hot_pixels
+from project.utils.dvs_noises import BackgroundActivityNoise, CenteredOcclusion, background_activity, hot_pixels
 
 from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames, ToTimeSurfaceCustom
 
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, noise: str = None, severity = 1, num_workers: int = 0, **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, noise: str = None, severity=1, num_workers: int = 0, **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
@@ -114,21 +114,21 @@ class DVSDataModule(pl.LightningDataModule):
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))
             ])
-        vt = [
-            representation,
-            transforms.Lambda(lambda x: x.astype(np.float32)),
-        ]
-        
-        if self.noise is not None and self.noise == 'hot_pixels':
-            vt.append(
-                transforms.Lambda(lambda x: hot_pixels(x, self.severity))
-            )
-        
+
         if self.noise is not None and self.noise == 'background_activity':
-            vt.append(
-                transforms.Lambda(lambda x: background_activity(x, self.severity))
-            )
-        
+            vt = [
+                BackgroundActivityNoise(self.sensor_size, self.severity)
+            ]
+        if self.noise is not None and self.noise == 'occlusion':
+            vt = [
+                CenteredOcclusion(self.severity, self.sensor_size)
+            ]
+        if self.noise is None:
+            vt = []
+
+        vt.append(representation)
+        vt.append(transforms.Lambda(lambda x: x.astype(np.float32)))
+
         val_transform = tonic.transforms.Compose(vt)
 
         train_transform = tonic.transforms.Compose([
@@ -173,7 +173,7 @@ class DVSDataModule(pl.LightningDataModule):
             self.train_set, _ = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.val_transform)
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
-        elif self.dataset =='ncars':
+        elif self.dataset == 'ncars':
             self.train_set = NCARS(self.data_dir, train=True, transform=self.train_transform)
             self.val_set = NCARS(self.data_dir, train=False, transform=self.val_transform)
             print(len(self.train_set), len(self.val_set))
