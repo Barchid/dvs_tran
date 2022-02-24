@@ -123,6 +123,12 @@ class DVSDataModule(pl.LightningDataModule):
             vt = [
                 CenteredOcclusion(self.severity, self.sensor_size)
             ]
+
+        if self.noise is not None and self.noise == 'reverse':
+            vt = [
+                tonic.transforms.RandomTimeReversal(p=1.0)
+            ]
+
         if self.noise is None:
             vt = []
 

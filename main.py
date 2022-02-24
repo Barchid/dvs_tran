@@ -133,7 +133,7 @@ def get_args():
     parser.add_argument('--timesteps', type=int, default=8)
     parser.add_argument('--blur_type', type=str, choices=['averaging', 'gaussian', 'median', None], default=None)
     parser.add_argument('--num_workers', type=int, default=0)
-    parser.add_argument('--noise', type=str, choices=['hot_pixels', 'background_activity', 'occlusion', None], default=None)
+    parser.add_argument('--noise', type=str, choices=['hot_pixels', 'background_activity', 'occlusion', 'reverse', None], default=None)
     parser.add_argument('--severity', type=int, choices=[1,2,3,4,5, None], default=None)
     
     # Args for model
