@@ -8,7 +8,9 @@ import torch.optim as optim
 import pytorch_lightning as pl
 from project.datamodules.dvs_datamodule import DVSDataModule
 from project.dvs_module import DVSModule
-
+from pytorch_grad_cam import GradCAM, ScoreCAM, GradCAMPlusPlus, AblationCAM, XGradCAM, EigenCAM, FullGrad
+from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+from pytorch_grad_cam.utils.image import show_cam_on_image
 
 def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
@@ -39,6 +41,27 @@ def main():
         fig = lr_finder.plot(suggest=True)
         fig.show()
         print(f'SUGGESTION IS :', lr_finder.suggestion())
+    elif args.mode == 'cam':
+        datamodule.setup()
+        val_loader = datamodule.val_dataloader()
+        x, y = next(iter(val_loader))
+        # x, y = x[0], y[0]
+        target_layers = [module.model.layer4[-1]]
+        input_tensor = x
+        cam = GradCAM(model=module, target_layers=target_layers, use_cuda=torch.cuda.is_available())
+        targets = [ClassifierOutputTarget(y[0])]
+        grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
+        grayscale_cam = grayscale_cam[0, :]
+        
+        
+        print(grayscale_cam.shape, x[0].shape)
+        
+        exit()
+        visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)
+        
+        plt.ims
+        
+        
     else:
         print(f'NOISE={args.noise} SEV={args.severity}')
         trainer.validate(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
@@ -97,7 +120,7 @@ def get_args():
     # Program args
     # TODO: you can add program-specific arguments here
     parser = ArgumentParser()
-    parser.add_argument('--mode', type=str, choices=["train", "validate", "lr_find"], default="train")
+    parser.add_argument('--mode', type=str, choices=["train", "validate", "lr_find", 'cam'], default="train")
     parser.add_argument('--ckpt_path', type=str, default=None,
                         help="Path of a checkpoint file. Defaults to None, meaning the training/testing will start from scratch.")
     parser.add_argument('--batch_size', type=int, default=32)
