@@ -10,7 +10,6 @@ import torch.nn.functional as F
 import torch
 from torch.utils.data import random_split
 import cv2
-from celluloid import Camera
 import random
 import matplotlib.pyplot as plt
 import pytorch_lightning as pl
