@@ -14,7 +14,7 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 
 def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
-    pl.seed_everything(4321)
+    pl.seed_everything(5678)
 
     args = get_args()
 
