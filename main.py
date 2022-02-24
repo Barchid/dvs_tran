@@ -36,6 +36,7 @@ def main():
         # here, we put the model's hyperparameters and the resulting val accuracy
         report.write(
             f"{args.name} {args.dataset} {args.event_representation} {args.blur_type} {args.learning_rate}  {trainer.checkpoint_callback.best_model_score}\n")
+        report.flush()
     elif args.mode == "lr_find":
         lr_finder = trainer.tuner.lr_find(module, datamodule=datamodule)
         fig = lr_finder.plot(suggest=True)
@@ -64,7 +65,13 @@ def main():
         
     else:
         print(f'NOISE={args.noise} SEV={args.severity}')
-        trainer.validate(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
+        out = trainer.validate(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
+        metrics = out[0]
+        report_path = os.path.join('experiments', 'validation_report.txt')
+        report = open(report_path, 'a')
+        report.write(f"{args.event_representation} {args.dataset} {args.noise} {args.severity} {metrics['val_acc']}")
+        report.flush()
+        report.close()
 
 
 def create_module(args, datamodule: DVSDataModule) -> pl.LightningModule:
