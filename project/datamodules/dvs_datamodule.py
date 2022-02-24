@@ -28,6 +28,7 @@ class DVSDataModule(pl.LightningDataModule):
         self.dataset = dataset  # name of the dataset
         self.timesteps = timesteps
         self.noise = noise
+        self.severity = severity
         self.event_representation = event_representation
         self.num_workers = num_workers
 
@@ -131,9 +132,9 @@ class DVSDataModule(pl.LightningDataModule):
         val_transform = tonic.transforms.Compose(vt)
 
         train_transform = tonic.transforms.Compose([
-            tonic.transforms.RandomTimeReversal(),
-            tonic.transforms.RandomFlipPolarity(),
-            tonic.transforms.RandomFlipLR(self.sensor_size),
+            # tonic.transforms.RandomTimeReversal(),
+            # tonic.transforms.RandomFlipPolarity(),
+            # tonic.transforms.RandomFlipLR(self.sensor_size),
             # denoise,
             representation,
             # transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
