@@ -15,18 +15,19 @@ import numpy as np
 from project.datamodules.cifar10dvs import CIFAR10DVS
 from einops import rearrange
 from project.datamodules.ncars import NCARS
+from project.utils.dvs_noises import background_activity, hot_pixels
 
 from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames, ToTimeSurfaceCustom
 
 
 class DVSDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, blur_type: str = None, num_workers: int = 0, **kwargs):
+    def __init__(self, batch_size: int, dataset: str, data_dir: str = "data/", event_representation: str = "HOTS", timesteps=10, noise: str = None, severity = 1, num_workers: int = 0, **kwargs):
         super().__init__()
         self.batch_size = batch_size
         self.data_dir = data_dir
         self.dataset = dataset  # name of the dataset
         self.timesteps = timesteps
-        self.blur_type = blur_type
+        self.noise = noise
         self.event_representation = event_representation
         self.num_workers = num_workers
 
@@ -103,7 +104,7 @@ class DVSDataModule(pl.LightningDataModule):
             representation = tonic.transforms.ToVoxelGrid(self.sensor_size, n_time_bins=self.timesteps)
 
         elif event_representation == 'weighted_frames':
-            representation = ToWeightedFrames(self.sensor_size, self.timesteps, blur_type=self.blur_type)
+            representation = ToWeightedFrames(self.sensor_size, self.timesteps, blur_type=None)
 
         elif event_representation == 'bit_encoding':
             representation = tonic.transforms.Compose([
@@ -112,13 +113,22 @@ class DVSDataModule(pl.LightningDataModule):
                 transforms.Lambda(lambda x: rearrange(
                     x, 'frames polarity height width -> (frames polarity) height width'))
             ])
-
-        val_transform = tonic.transforms.Compose([
-            # denoise,
+        vt = [
             representation,
-            # transforms.Lambda(lambda x: F.upsample(torch.from_numpy(x), size=(224, 224), mode='nearest').numpy()),
             transforms.Lambda(lambda x: x.astype(np.float32)),
-        ])
+        ]
+        
+        if self.noise is not None and self.noise == 'hot_pixels':
+            vt.append(
+                transforms.Lambda(lambda x: hot_pixels(x, self.severity))
+            )
+        
+        if self.noise is not None and self.noise == 'background_activity':
+            vt.append(
+                transforms.Lambda(lambda x: background_activity(x, self.severity))
+            )
+        
+        val_transform = tonic.transforms.Compose(vt)
 
         train_transform = tonic.transforms.Compose([
             # tonic.transforms.RandomTimeReversal(),

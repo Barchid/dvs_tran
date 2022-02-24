@@ -40,6 +40,7 @@ def main():
         fig.show()
         print(f'SUGGESTION IS :', lr_finder.suggestion())
     else:
+        print(f'NOISE={args.noise} SEV={args.severity}')
         trainer.validate(module, datamodule=datamodule, ckpt_path=args.ckpt_path)
 
 
@@ -109,6 +110,8 @@ def get_args():
     parser.add_argument('--timesteps', type=int, default=8)
     parser.add_argument('--blur_type', type=str, choices=['averaging', 'gaussian', 'median', None], default=None)
     parser.add_argument('--num_workers', type=int, default=0)
+    parser.add_argument('--noise', type=str, choices=['hot_pixels', 'background_activity', None], default=None)
+    parser.add_argument('--severity', type=int, choices=[1,2,3,4,5, None], default=None)
     
     # Args for model
     parser = DVSModule.add_model_specific_args(parser)
