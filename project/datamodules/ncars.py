@@ -33,7 +33,7 @@ class NCARS(VisionDataset):
 
     class_dict = {"background": 0, "cars": 1}
 
-    sensor_size = (120, 100)
+    sensor_size = (120, 100, 2)
     minimum_y_value = 140
     ordering = "txyp"
 

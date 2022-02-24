@@ -14,6 +14,7 @@ import numpy as np
 
 from project.datamodules.cifar10dvs import CIFAR10DVS
 from einops import rearrange
+from project.datamodules.ncars import NCARS
 
 from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames, ToTimeSurfaceCustom
 
@@ -47,6 +48,8 @@ class DVSDataModule(pl.LightningDataModule):
             return (224, 224, 2), 101
         elif self.dataset == "asl-dvs":
             return tonic.datasets.ASLDVS.sensor_size, len(tonic.datasets.ASLDVS.classes)
+        elif self.dataset == 'ncars':
+            return NCARS.sensor_size, len(NCARS.classes)
 
     def prepare_data(self) -> None:
         # downloads the dataset if it does not exist
@@ -61,6 +64,8 @@ class DVSDataModule(pl.LightningDataModule):
             tonic.datasets.NCALTECH101(save_to=self.data_dir)
         elif self.dataset == "asl-dvs":
             tonic.datasets.ASLDVS(save_to=self.data_dir)
+        elif self.dataset == 'ncars':
+            NCARS(save_to=self.data_dir, download=True)
 
     def _get_transforms(self, event_representation: str):
         # denoise = tonic.transforms.Denoise()
@@ -157,6 +162,10 @@ class DVSDataModule(pl.LightningDataModule):
             self.train_set, _ = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
             dataset = tonic.datasets.ASLDVS(save_to=self.data_dir, transform=self.val_transform)
             _, self.val_set = random_split(dataset, [0.8 * full_length, full_length - (0.8 * full_length)])
+        elif self.dataset =='ncars':
+            self.train_set = NCARS(self.data_dir, train=True, transform=self.train_transform)
+            self.val_set = NCARS(self.data_dir, train=False, transform=self.val_transform)
+            print(len(self.train_set), len(self.val_set))
 
     def train_dataloader(self):
         return DataLoader(self.train_set, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)

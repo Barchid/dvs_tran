@@ -101,7 +101,7 @@ def get_args():
                         help="Path of a checkpoint file. Defaults to None, meaning the training/testing will start from scratch.")
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--dataset', type=str, choices=["n-mnist",
-                                                        "n-caltech101", "cifar10-dvs", "n-cars", "asl-dvs", "dvsgesture"])
+                                                        "n-caltech101", "cifar10-dvs", "ncars", "asl-dvs", "dvsgesture"])
     parser.add_argument('--event_representation', type=str,
                         choices=["frames_time", "frames_event", "HATS", "HOTS", "VoxelGrid", "histogram", "weighted_frames", "bit_encoding"])
     parser.add_argument('--height', type=int, default=256)
