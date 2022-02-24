@@ -58,7 +58,8 @@ class NCARS(VisionDataset):
                 "Dataset not found or corrupted."
                 + " You can use download=True to download it"
             )
-
+            
+        save_to = self.location_on_system
         if train:
             target_zip = self.train_file
             source_path = os.path.join(save_to, "train")

@@ -21,6 +21,17 @@ python main.py --default_root_dir="experiments/bit_cifar10" --num_workers=0 --gp
 python main.py --default_root_dir="experiments/multibit_cifar10" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=3 --dataset="cifar10-dvs" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 
 
+
+
+python main.py --default_root_dir="experiments/framestime_ncars" --num_workers=10 --gpus=1 --event_representation="frames_time" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/voxel_ncars" --num_workers=10 --gpus=1 --event_representation="VoxelGrid" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/histogram_ncars" --num_workers=10 --gpus=1 --event_representation="histogram" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/bit_ncars" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=1 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+python main.py --default_root_dir="experiments/multibit_ncars" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=3 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+
+
+
+
 python main.py --default_root_dir="experiments/hots_cifar10" --num_workers=10 --gpus=1 --event_representation="HOTS" --timesteps=8 --dataset="cifar10-dvs" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 python main.py --default_root_dir="experiments/hots_nmnist" --num_workers=5 --gpus=1 --event_representation="HOTS" --timesteps=8 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 
