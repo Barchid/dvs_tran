@@ -69,7 +69,7 @@ def main():
         metrics = out[0]
         report_path = os.path.join('experiments', 'validation_report.txt')
         report = open(report_path, 'a')
-        report.write(f"{args.event_representation} {args.dataset} {args.noise} {args.severity} {metrics['val_acc']}")
+        report.write(f"{args.event_representation} {args.dataset} {args.noise} {args.severity} {metrics['val_acc']}\n")
         report.flush()
         report.close()
 
