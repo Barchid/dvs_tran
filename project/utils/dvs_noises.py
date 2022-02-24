@@ -28,6 +28,8 @@ def hot_pixels(frames: np.array, severity: int):
     # create the mask of hot pixels (H,W) (1 where there will be a hot pixel and 0 where the pixels won't be broken)
     # from https://stackoverflow.com/questions/19597473/binary-random-array-with-a-specific-proportion-of-ones
     N = frames[0][0].size  # total size of mask
+    print(N, frames.shape)
+    exit()
     K = int(c * N)  # certain proportion of broken pixels
     hot_pixels_mask = np.array([1.] * K + [0.] * (N-K))
     np.random.shuffle(hot_pixels_mask)
