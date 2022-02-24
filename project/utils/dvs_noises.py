@@ -45,7 +45,7 @@ class BackgroundActivityNoise:
     severity: int
 
     def __call__(self, events):
-        c = [.03, .06, .09, 0.17, 0.27][self.severity - 1]  # percentage of events to add in noise
+        c = [.005, 0.01, 0.03, .10, .15][self.severity - 1]  # percentage of events to add in noise
         n_noise_events = int(c * len(events))
         noise_events = np.zeros(n_noise_events, dtype=events.dtype)
         for channel in events.dtype.names:
