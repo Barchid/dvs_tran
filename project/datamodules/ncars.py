@@ -83,9 +83,9 @@ class NCARS(Dataset):
 
     def __getitem__(self, index):
         events = loris.read_file(self.samples[index])["events"]
+        events = np.array(structured_to_unstructured(events, dtype=np.float))
         print(events)
         exit()
-        events = np.array(structured_to_unstructured(events, dtype=np.float))
         events[:, 2] -= self.minimum_y_value
         target = self.targets[index]
         if self.transform is not None:
