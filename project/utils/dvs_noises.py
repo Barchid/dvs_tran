@@ -36,7 +36,7 @@ class CenteredOcclusion:
             for y in range(mid[1] - occ_len_y // 2, mid[1] + occ_len_y // 2):
                 coordinates.append((x, y))
 
-        return tonic.transforms.functional.drop_pixel_numpy(events=events, coordinates=self.coordinates)
+        return tonic.transforms.functional.drop_pixel_numpy(events=events, coordinates=coordinates)
 
 
 @dataclass(frozen=True)
