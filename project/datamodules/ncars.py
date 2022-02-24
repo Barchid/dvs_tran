@@ -96,6 +96,7 @@ class NCARS(VisionDataset):
         return len(self.samples)
 
     def download(self):
-        download_and_extract_archive(
-            self.url, self.location_on_system, filename=self.filename, md5=self.file_md5
-        )
+        if not os.path.exists(self.location_on_system):
+            download_and_extract_archive(
+                self.url, self.location_on_system, filename=self.filename, md5=self.file_md5
+            )
