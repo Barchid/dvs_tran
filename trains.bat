@@ -23,11 +23,15 @@ python main.py --default_root_dir="experiments/multibit_cifar10" --num_workers=1
 
 
 
-
+@REM 92.48
 python main.py --default_root_dir="experiments/framestime_ncars" --num_workers=10 --gpus=1 --event_representation="frames_time" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+@REM 90.71
 python main.py --default_root_dir="experiments/voxel_ncars" --num_workers=10 --gpus=1 --event_representation="VoxelGrid" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+@REM 91.77
 python main.py --default_root_dir="experiments/histogram_ncars" --num_workers=10 --gpus=1 --event_representation="histogram" --timesteps=10 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+@REM 92.04
 python main.py --default_root_dir="experiments/bit_ncars" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=1 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
+
 python main.py --default_root_dir="experiments/multibit_ncars" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=3 --dataset="ncars" --batch_size=256 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001 --log_every_n_steps=1
 
 
