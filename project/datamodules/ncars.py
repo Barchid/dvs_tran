@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from torchvision.datasets.vision import VisionDataset
+from tonic.dataset import Dataset
 from torchvision.datasets.utils import (
     check_integrity,
     download_and_extract_archive,
@@ -9,7 +9,7 @@ from torchvision.datasets.utils import (
 from numpy.lib.recfunctions import structured_to_unstructured
 import loris
 
-class NCARS(VisionDataset):
+class NCARS(Dataset):
     """N-Cars <https://www.prophesee.ai/dataset-n-cars-download/> data set.
     Args:
         save_to (string): Location to save files to on disk.
