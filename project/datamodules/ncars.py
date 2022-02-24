@@ -87,7 +87,7 @@ class NCARS(Dataset):
         events[:, 2] -= self.minimum_y_value
         target = self.targets[index]
         if self.transform is not None:
-            events = self.transform(events, self.sensor_size, self.ordering)
+            events = self.transform(events)
         if self.target_transform is not None:
             target = self.target_transform(target)
         return events, target

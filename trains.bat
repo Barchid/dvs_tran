@@ -3,6 +3,7 @@
 python main.py --default_root_dir="experiments/voxel_nmnist" --num_workers=8 --gpus=1 --event_representation="VoxelGrid" --timesteps=10 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.009
 @REM 99.34
 python main.py --default_root_dir="experiments/bit_nmnist" --num_workers=8 --gpus=1 --event_representation="bit_encoding" --timesteps=1 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.0019
+@REM 99.52
 python main.py --default_root_dir="experiments/multibit_nmnist" --num_workers=10 --gpus=1 --event_representation="bit_encoding" --timesteps=3 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.001
 @REM 99.36
 python main.py --default_root_dir="experiments/framestime_nmnist" --num_workers=8 --gpus=1 --event_representation="frames_time" --timesteps=10 --dataset="n-mnist" --batch_size=1024 --max_epochs=60 --height=224 --width=224 --learning_rate=0.0019 --mode="lr_find"
