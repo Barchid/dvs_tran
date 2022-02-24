@@ -18,6 +18,33 @@ from torch.utils.data.dataloader import DataLoader
 from torchvision import transforms
 
 
+@dataclass(frozen=True)
+class RandomTimeReversal:
+    """Temporal flip is defined as:
+
+        .. math::
+           t_i' = max(t) - t_i
+
+           p_i' = -1 * p_i
+
+    Parameters:
+        p (float): probability of performing the flip
+    """
+
+    p: float = 0.5
+
+    def __call__(self, events):
+        events = events.copy()
+        assert "t" and "p" in events.dtype.names
+        if np.random.rand() < self.p:
+            events["t"] = np.max(events["t"]) - events["t"]
+            if events['p'].dtype == np.int64:
+                events["p"] *= -1
+            else:
+                events['p'] = not events['p']
+        return events
+
+
 @dataclass
 class CenteredOcclusion:
     severity: int

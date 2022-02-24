@@ -15,7 +15,7 @@ import numpy as np
 from project.datamodules.cifar10dvs import CIFAR10DVS
 from einops import rearrange
 from project.datamodules.ncars import NCARS
-from project.utils.dvs_noises import BackgroundActivityNoise, CenteredOcclusion, background_activity, hot_pixels
+from project.utils.dvs_noises import BackgroundActivityNoise, CenteredOcclusion, RandomTimeReversal, background_activity, hot_pixels
 
 from project.utils.phase_dvs import ToBitEncoding, ToWeightedFrames, ToTimeSurfaceCustom
 
@@ -126,7 +126,7 @@ class DVSDataModule(pl.LightningDataModule):
 
         if self.noise is not None and self.noise == 'reverse':
             vt = [
-                tonic.transforms.RandomTimeReversal(p=1.0)
+                RandomTimeReversal(p=1.0)
             ]
 
         if self.noise is None:
