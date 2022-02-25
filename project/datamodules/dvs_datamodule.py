@@ -183,6 +183,8 @@ class DVSDataModule(pl.LightningDataModule):
             self.train_set = NCARS(self.data_dir, train=True, transform=self.train_transform)
             self.val_set = NCARS(self.data_dir, train=False, transform=self.val_transform)
             print(len(self.train_set), len(self.val_set))
+            
+        print(len(self.train_set), len(self.val_set))
 
     def train_dataloader(self):
         return DataLoader(self.train_set, batch_size=self.batch_size, num_workers=self.num_workers, shuffle=True)
